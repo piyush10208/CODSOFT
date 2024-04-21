@@ -1,0 +1,89 @@
+import java.util.Scanner;
+class BankAccount {
+    private double balance;
+    public BankAccount(double balance) {
+        this.balance = balance;
+    }
+    public void deposit(double amount) {
+        balance += amount;
+        System.out.println("Deposit successful. Current balance: " + balance);
+    }
+    public void withdraw(double amount) {
+        if (balance >= amount) {
+            balance -= amount;
+            System.out.println("Withdrawal successful. Current balance: " + balance);
+        } else {
+            System.out.println("Insufficient balance.");
+        }
+    }
+    public double checkBalance() {
+        return balance;
+    }
+}
+class ATM {
+    private BankAccount bankAccount;
+
+    public ATM(BankAccount bankAccount) {
+        this.bankAccount = bankAccount;
+    }
+    public void displayMenu() {
+        System.out.println("\nATM Menu:");
+        System.out.println("1. Withdraw");
+        System.out.println("2. Deposit");
+        System.out.println("3. Check Balance");
+        System.out.println("4. Exit");
+    }
+    public void performTransaction(int choice, double amount) {
+        switch (choice) {
+            case 1:
+                bankAccount.withdraw(amount);
+                break;
+            case 2:
+                bankAccount.deposit(amount);
+                break;
+            case 3:
+                System.out.println("Current Balance: " + bankAccount.checkBalance());
+                break;
+            case 4:
+                System.out.println("Thank you for using the ATM. Goodbye!");
+                System.exit(0);
+            default:
+                System.out.println("Invalid choice. Please try again.");
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter initial balance: ");
+        double initialBalance = scanner.nextDouble();
+
+        BankAccount userAccount = new BankAccount(initialBalance);
+        ATM atm = new ATM(userAccount);
+
+        while (true) {
+            atm.displayMenu();
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+
+            if (choice == 4) {
+                break;
+            }
+
+            if (choice >= 1 && choice <= 3) {
+                if (choice != 3) {
+                    System.out.print("Enter amount: ");
+                    double amount = scanner.nextDouble();
+                    atm.performTransaction(choice, amount);
+                } else {
+                    atm.performTransaction(choice, 0); 
+                  }
+            } else {
+                System.out.println("Invalid choice. Please try again.");
+            }
+        }
+
+        scanner.close();
+    }
+}
