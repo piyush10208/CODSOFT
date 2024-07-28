@@ -1,0 +1,40 @@
+# Import necessary libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.preprocessing import LabelEncoder
+import joblib
+
+# Load the dataset
+file_path = '/content/IRIS.csv' 
+iris_data = pd.read_csv(file_path)
+
+# Display the first few rows of the dataset
+print("First few rows of the dataset:")
+print(iris_data.head())
+
+# Check for missing values
+print("\nMissing values in the dataset:")
+print(iris_data.isnull().sum())
+
+# Encode the species labels if necessary
+le = LabelEncoder()
+iris_data['species'] = le.fit_transform(iris_data['species'])
+
+# Split the data into training and testing sets
+X = iris_data.drop('species', axis=1)
+y = iris_data['species']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train a classification model
+model = RandomForestClassifier(n_estimators=100, random_state=42)
+model.fit(X_train, y_train)
+
+# Evaluate the model
+y_pred = model.predict(X_test)
+print("\nModel evaluation:")
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("Classification Report:\n", classification_report(y_test, y_pred))
+
