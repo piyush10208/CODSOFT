@@ -1,0 +1,37 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from imblearn.under_sampling import RandomUnderSampler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+
+# Load the dataset
+data = pd.read_csv('/content/creditcard.csv')
+
+# Check for missing values and drop them if any
+data = data.dropna()
+
+# Separate features and target
+X = data.iloc[:, :-1]  # All columns except the last one
+y = data.iloc[:, -1]   # Only the last column
+
+# Normalize the data
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Apply RandomUnderSampler
+rus = RandomUnderSampler(random_state=42)
+X_resampled, y_resampled = rus.fit_resample(X_scaled, y)
+
+# Split the dataset
+X_train, X_test, y_train, y_test = train_test_split(X_resampled, y_resampled, test_size=0.3, random_state=42)
+
+# Train the model
+model = LogisticRegression(random_state=42)
+model.fit(X_train, y_train)
+
+# Make predictions
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+print(classification_report(y_test, y_pred, target_names=['Genuine', 'Fraudulent']))
